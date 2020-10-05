@@ -1,0 +1,268 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+    <title>@ViewBag.Title - ATM</title>
+    @*<link href="~/Content/font-awesome.min.css" rel="stylesheet" />*@
+    <link rel="stylesheet" href="~/AdminLTE-3.0.1/plugins/fontawesome-free/css/all.min.css">
+    <link href="~/AdminLTE-3.0.1/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/AdminLTE-3.0.1/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/AdminLTE-3.0.1/dist/css/@ATM_Application.Languages.lang.ApplicationDirection">
+
+    <script src="~/scripts/jquery-3.4.1.slim.min.js"></script>
+
+    <script src="~/scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/scripts/popper.min.js"></script>
+    <script src="~/scripts/bootstrap.min.js"></script>
+
+    <script src="~/scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/additional-methods.min.js"></script>
+    <script src="~/AdminLTE-3.0.1/plugins/select2/js/select2.min.js"></script>
+    <script src="~/AdminLTE-3.0.1/plugins/select2/js/select2.full.min.js"></script>
+    <script src="~/AdminLTE-3.0.1/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+
+    <script src="~/AdminLTE-3.0.1/plugins/jquery-validation/localization/@ATM_Application.Languages.lang.MsgLocal"></script>
+
+    <style>
+
+        body {
+            background: url('../Images/5.jpeg') no-repeat center center fixed;
+           
+            color: #000;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .navbar-nav > li > a {
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+        }
+
+        .navbar {
+            min-height: 10px !important
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <script>
+        $(function () {
+
+               var referrer =  document.referrer;
+            var pageURL = $(location).attr("href");
+           // $(".float").attr('href', referrer);
+
+            $(".float").click(function () {
+
+
+                window.history.back()
+            });
+
+            var Id;
+        $.ajax({
+
+            url: "/AtmLogin/GetCitizenId",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                Id = res;
+
+            }
+
+        });
+
+            var seesion;
+            $.ajax({
+                url: "/AtmLogin/Sessionvalue",
+                data: "",
+                async: false,
+                success: function (res) {
+
+                    seesion = res;
+
+                }
+            });
+            $("#mybalance").click(function () {
+
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Balance",
+                    data: { Cid: Id },
+                    async: false,
+
+                    success: function (res) {
+
+                        if (seesion == "ar-EG") {
+
+                           
+                             $("#modelbody").text(" رصيدك: " + res);
+                         }
+                         else {
+
+                            $("#modelbody").text("Your Balance: " + res);
+               
+                        }
+                        $("#mo").modal('show');
+                        
+                   
+
+                    }
+
+            });
+
+                
+
+            });
+           
+        });
+    </script>
+    <style>
+       .div  {
+          float:left;
+
+        }
+     
+        .float{
+	position:fixed;
+    justify-content:center;
+    align-items:center; 
+	width:60px;
+	height:60px;
+	bottom:40px;
+	left:40px;
+	background-color: rgba(255, 255, 255, 0.86);
+	color:#FFF;
+	border-radius:50px;
+	text-align:center;
+	box-shadow: 2px 2px 3px #999;
+}
+
+.my-float{
+	font-size:24px;
+	margin-top:18px;
+}
+ a.float i:hover{
+	color:red;
+   
+}
+
+a.float + div.label-container {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s ease;
+}
+
+a.float:hover + div.label-container{
+  visibility: visible;
+  opacity: 1;
+}
+    </style>
+</head>
+
+
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light  mb-0 shadow " style="background-color:rgba(255, 255, 255, 0.50);">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img style="height:55px ; width:80px" src="~/img/22 .png" class="img-circle elevation-2" />
+
+            </a>
+            <h2 style="display:inline-block; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif "> GSE</h2>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav @ATM_Application.Languages.lang.ml_auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/ATMMinistry/Index">
+                            @ATM_Application.Languages.lang.Home1
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @ATM_Application.Languages.lang.Language1
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="/Languages/English">@ATM_Application.Languages.lang.English</a>
+                                <a class="dropdown-item" href="/Languages/Arabic">@ATM_Application.Languages.lang.Arabic</a>
+
+                            </div>
+                        </div>
+
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="mybalance">@ATM_Application.Languages.lang.MyBalance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/AtmLogin/Lang">@ATM_Application.Languages.lang.LogOut</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Secondary raised circle button with ripple effect -->
+    
+    <!-- Page Content -->
+    <div class="container">
+        <div class="card border-0 shadow my-5" style="background-color:rgba(255, 255, 255, 0.76)">
+            <div class="card-body p-5">
+                @*<h1 class="font-weight-light">Fixed Full Page Background Image</h1>
+        <p class="lead">In this snippet, the background image is fixed to the body element. Content on the page will scroll, but the image will remain in a fixed position!</p>
+        <p class="lead">Scroll down...</p>*@
+                <div class="div">
+                   
+                        <a href="#" class="float">
+                            <i class="fa fa-arrow-left my-float text-primary" id="ftb"></i>
+                        </a>
+                  
+                   
+                </div>
+               
+                @RenderBody()
+
+
+                @*<p class="lead mb-0">You've reached the end!</p>*@
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="mo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.MyBalance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modelbody">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.Close</button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
