@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <script>
+    $(function () {
+
+
+         var seesion;
+        $.ajax({
+            url: "/AtmLogin/Sessionvalue",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                seesion = res;
+
+            }
+        });
+        if (seesion == "ar-EG") {
+            $(".services").empty();
+            $(".services").append("<h1> خدمات <span>   الداخلية</span> </h1>");
+        }
+        else {
+
+             $(".services").empty();
+            $(".services").append("<h1> Interior <span>   Services</span> </h1>");
+        }
+    });
+    </script>
+<style>
+    .services {
+        margin-bottom: 30px;
+    }
+
+    .service-box {
+        box-shadow: 0 0 4px 0 #1c0892;
+        padding: 15px;
+        position: relative;
+    }
+
+    p {
+        text-align: justify;
+    }
+
+    .aaa {
+        font-size: 40px;
+        margin-bottom: 20px;
+    }
+
+    h3 {
+        color: #585353;
+    }
+
+    h1 {
+        color: #585353;
+    }
+
+    /*a{
+        width:40px;
+        height:40px;
+        border-radius:50%;
+        display:block;
+        text-align:center;
+        position:absolute;
+        bottom:-20px;
+        right:20px;
+
+
+    }*/
+
+    h3 {
+        background: linear-gradient(to right, #3c69f8,#1c0892);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+    span {
+        background: linear-gradient(to right, #3c69f8,#1c0892);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="services">
+            
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="service-box">
+                    <i class="aaa fa fa-list-ul"></i>
+                    <h3>@ATM_Application.Languages.lang.Book </h3>
+
+                    <a href="/Reservation/Create"
+                       style="width:40px; height:40px;border-radius:50%;display:block;  text-align:center;position:absolute;bottom:-20px; @ATM_Application.Languages.lang.right:20px;">
+                        <i class="aaa fa fa-arrow-circle-@ATM_Application.Languages.lang.right"></i>
+
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-box">
+                    <i class="aaa fa fa-list-ul"></i>
+                    <h3>@ATM_Application.Languages.lang.civil_affairs </h3>
+
+                    <a href="/ATMCivilAffairs/Index"
+                       style="width:40px; height:40px;border-radius:50%;display:block;  text-align:center;position:absolute;bottom:-20px; @ATM_Application.Languages.lang.right:20px;">
+                    <i class="aaa fa fa-arrow-circle-@ATM_Application.Languages.lang.right"></i>
+                    
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="service-box">
+                    <i class=" aaa fa fa-list-ul"></i>
+                    <h3>@ATM_Application.Languages.lang.Complains </h3>
+
+                    <a href="/Complaint/Create"
+                       style="width:40px;
+        height:40px;
+        border-radius:50%;
+        display:block;
+        text-align:center;
+        position:absolute;
+        bottom:-20px;
+        @ATM_Application.Languages.lang.right:20px;"><i class="aaa fa fa-arrow-circle-@ATM_Application.Languages.lang.right"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+</body>

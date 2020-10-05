@@ -1,0 +1,749 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_layout.cshtml";
+}
+
+<script src="~/jasonday-printThis-0aa7434/printThis.js"></script>
+<script src="~/qrCodeJs/qrcode.min.js"></script>
+<style>
+    .error {
+        color: red;
+        font-weight: bold
+    }
+</style>
+<script>
+    $(function () {
+
+
+         var Id ;
+        $.ajax({
+
+            url: "/AtmLogin/GetCitizenId",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                Id = res ;
+
+            }
+
+        });
+
+
+        // balance validation
+        var fooorm = $("#form");
+        $("#form").validate();
+        $("#pr").click(function () {
+
+            if (fooorm.valid() == true) {
+
+
+                  $.ajax({
+                    url: "http://192.168.1.34:88/api/Balance",
+                    data: { Id: Id },
+                    async: false,
+                       success: function (res) {
+
+                           if (res == "true") {
+
+                               $('#exampleModa2').modal('show');
+
+                           }
+                           else if (res == "false") {
+                               $('#exampleModal1').modal('show');
+                           }
+                           else {
+                                $('#exampleModal3').modal('show');
+                           }
+                    }
+
+                });
+
+            }
+
+        });
+
+
+
+       
+
+        $("#citi").select2();
+        $("#citi").change(function () {
+
+            var data = $(this).val();
+              var qr;
+              $("#qrcode").empty();
+            $.ajax({
+
+                url: "http://192.168.1.34:88/api/QRcode",
+                data: {cid:data},
+                async: false,
+                success: function (res) {
+
+                    qr = res;
+
+            }
+
+            });
+
+               var q = new QRCode("qrcode", {
+                   text: qr,
+                   width: 60,
+                   height:60,
+                   colorDark : "#000000",
+                   colorLight : "#ffffff",
+                   correctLevel : QRCode.CorrectLevel.H
+              });
+
+        });
+
+         $('#btn').click(function () {
+
+            $("#print").printThis({
+
+                 debug: false,               // show the iframe for debugging
+                 importCSS: true,            // import parent page css
+                 importStyle: false,         // import style tags
+                 printContainer: true,       // print outer container/$.selector
+                 loadCSS: "C:\Users\Dashmala\Source\Repos\Servicely\Servicely\Content\bootstrap.css",                // path to additional css file - use an array [] for multiple
+                 pageTitle: "",              // add title to print page
+                 removeInline: false,        // remove inline styles from print elements
+                 removeInlineSelector: "*",  // custom selectors to filter inline styles. removeInline must be true
+                 printDelay: 333,            // variable print delay
+                 header: null,               // prefix to html
+                 footer: null,               // postfix to html
+                 base: false,                // preserve the BASE tag or accept a string for the URL
+                 formValues: true,           // preserve input/form values
+                 canvas: false,              // copy canvas content
+                 doctypeString: '<!DOCTYPE html>', // enter a different doctype for older markup
+                 removeScripts: false,       // remove script tags from print content
+                 copyTagClasses: false,      // copy classes from the html & body tag
+                 beforePrintEvent: null,     // callback function for printEvent in iframe
+                 beforePrint: null,          // function called before iframe is filled
+                 afterPrint: null            // function called before iframe is removed
+
+            });
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Balance",
+                    data: { Id: Id, balance: 40 },
+                  async: false,
+
+                  success: function (res) {
+
+                     const Toast = Swal.mixin({
+
+
+                        toast: true,
+
+                        position: 'top-end',
+
+                        showConfirmButton: false,
+
+                        timer: 5000,
+                        onOpen: (toast) => {
+
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+
+                        }
+
+
+                    });
+
+
+                    Toast.fire({
+
+                        type: 'success',
+
+
+                        title: res
+
+
+                    });
+
+                }
+
+            });
+    });
+
+      var seesion;
+        $.ajax({
+            url: "/AtmLogin/Sessionvalue",
+            data: "",
+            async:false,
+            success: function (res) {
+
+                seesion = res;
+
+            }
+        });
+
+
+
+        if (seesion == "ar-EG") {
+             //-----------------------
+
+        var citizenId = { Id: Id }
+        $("#citi").empty();
+        $.ajax({
+            type:"Post",
+            url: "http://192.168.1.34:88/api/DeathCertificate",
+            data: JSON.stringify(citizenId),
+             contentType: "application/json",
+            async: false,
+            success: function (res) {
+                                    $("#citi").append("<option >   </option>");
+                  $.each(res, function (i, r) {
+                        // "+" " + "citizen_first_name"+" "+ "citizen_second_name" + " "+ "citizen_third_name"+" "+ "citizen_fourth_name"
+                      //" + r.citizen_national_id + " " + r.citizen_first_name + " " ++ " " +  + " " + +"
+                      $("#citi").append("<option value='" + r.Id + "'> " + r.NId + " &nbsp;   " + r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic + "   </option>");
+
+                    });
+             
+
+            },
+            error: function (res) {
+
+
+
+            }
+
+
+        });
+           //Mother Information
+        $("#citi").change(function () {
+
+            var data = $(this).val();
+
+            $("#MRelegion").empty();
+            $("#Mnationality").empty();
+            $("#MotherName").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/BirthCertificate",
+                data: { y: data },
+                async: false,
+                success: function (res) {
+
+                    $.each(res, function (i,r) {
+                       // $("#tbb1").append("<tr>   <td> "+r.citizen_first_name+" "+r.citizen_second_name +" "+r.citizen_third_name +" "+r.citizen_fourth_name+ " </td>  <td> "+ r.citizen_gender+" </td> <td> "+ r.citizen_birthDate +"</td> <td> "+r.state_name+" </td> <td> "+r.city_name+" </td>  </tr>");
+                            if (r.citizen_relegion == "Muslim") {
+                        $("#MRelegion").text("مسلم");
+                    }
+                    else if (r.citizen_relegion == "Cristian") {
+                        $("#MRelegion").text("مسيحي");
+                    }
+                    else if (r.citizen_relegion == "Jewish") {
+                        $("#MRelegion").text("يهودي");
+                    }
+                    else {
+                         $("#MRelegion").text(r.citizen_relegion);
+                    }
+
+                        $("#Mnationality").text("مصري");
+                        $("#MotherName").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+                    });
+                }
+
+            });
+
+
+        });
+
+             $("#citi").change(function () {
+
+            var data = $(this).val();
+
+            $("#Age").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/DeathCertificate",
+                data: { Id: data },
+                async: false,
+                success: function (res) {
+
+                    $("#Age").text( res +" سنة");
+
+                }
+
+            });
+
+
+        });
+
+         $("#citi").change(function () {
+
+            var data = $(this).val();
+
+            $("#SocialStatus").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/DeathCertificate",
+                data: { social: data },
+                async: false,
+                success: function (res) {
+
+                    $("#SocialStatus").text(res);
+
+                }
+
+            });
+
+
+        });
+
+         $("#citi").change(function () {
+
+            var data = $(this).val();
+
+             $("#Name").empty();
+             $("#Gender").empty();
+             $("#egyptian").empty();
+             $("#DeathDate").empty();
+             $("#DeathPlace").empty();
+             $("#BirthPlace").empty();
+
+             $.ajax({
+                 type:"Get",
+                url: "http://192.168.1.34:88/api/DeathCertificate",
+                data: { citi: data },
+                async: false,
+                success: function (res) {
+
+                    $.each(res, function (i,r) {
+                        // $("#tbb1").append("<tr>   <td> "+r.citizen_first_name+" "+r.citizen_second_name +" "+r.citizen_third_name +" "+r.citizen_fourth_name+ " </td>  <td> "+ r.citizen_gender+" </td> <td> "+ r.citizen_birthDate +"</td> <td> "+r.state_name+" </td> <td> "+r.city_name+" </td>  </tr>");
+                        @*var d = r.citizen_birthDate;
+                        var d1 = @DateTime.Now;
+                        var diffirence = new Date(d1 - d);
+                        var days = diffirence / 1000 / 60 / 60 / 24;
+                        $("#Age").text(days);*@
+                        $("#Name").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+
+
+                         if (r.citizen_gender == "Male") {
+
+                        $("#Gender").text("ذكر");
+                    }
+                    else {
+                        $("#Gender").text("انثى");
+                    }
+                        $("#egyptian").text("مصري");
+                        $("#DeathDate").text(r.deceased_deathDate);
+                        $("#DeathPlace").text(r.deceased_deathPlace_arabic);
+                        $("#BirthPlace").text(r.citizen_birthPlace);
+
+                    });
+                }
+
+            });
+
+
+        });
+
+        }
+        else {
+             //-----------------------
+
+        var citizenId = { Id: Id }
+        $("#citi").empty();
+        $.ajax({
+            type:"Post",
+            url: "http://192.168.1.34:88/api/DeathCertificate",
+            data: JSON.stringify(citizenId),
+             contentType: "application/json",
+            async: false,
+            success: function (res) {
+                                    $("#citi").append("<option >   </option>");
+                  $.each(res, function (i, r) {
+                        // "+" " + "citizen_first_name"+" "+ "citizen_second_name" + " "+ "citizen_third_name"+" "+ "citizen_fourth_name"
+                      //" + r.citizen_national_id + " " + r.citizen_first_name + " " ++ " " +  + " " + +"
+                      $("#citi").append("<option value='" + r.Id + "'> " + r.NId + " &nbsp;   " + r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name + "   </option>");
+
+                    });
+             
+
+            },
+            error: function (res) {
+
+
+
+            }
+
+
+        });
+            //Mother Information
+        $("#citi").change(function () {
+
+            var data = $(this).val();
+
+            $("#MotherNamee").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/BirthCertificate",
+                data: { y: data },
+                async: false,
+                success: function (res) {
+
+                    $.each(res, function (i,r) {
+                       // $("#tbb1").append("<tr>   <td> "+r.citizen_first_name+" "+r.citizen_second_name +" "+r.citizen_third_name +" "+r.citizen_fourth_name+ " </td>  <td> "+ r.citizen_gender+" </td> <td> "+ r.citizen_birthDate +"</td> <td> "+r.state_name+" </td> <td> "+r.city_name+" </td>  </tr>");
+                      $("#MotherNamee").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name)
+
+                    });
+                }
+
+            });
+
+
+        });
+         $("#citi").change(function () {
+
+            var data = $(this).val();
+
+            $("#SocialStatus").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/DeathCertificate",
+                data: { social: data },
+                async: false,
+                success: function (res) {
+
+                    $("#SocialStatus").text( res );
+
+                }
+
+            });
+
+
+        });
+            $("#citi").change(function () {
+
+            var data = $(this).val();
+
+            $("#Age").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/DeathCertificate",
+                data: { Id: data },
+                async: false,
+                success: function (res) {
+
+                    $("#Age").text( res +" Year");
+
+                }
+
+            });
+
+
+        });
+         $("#citi").change(function () {
+
+            var data = $(this).val();
+
+             $("#Name").empty();
+             $("#Gender").empty();
+             $("#egyptian").empty();
+             $("#DeathDate").empty();
+             $("#DeathPlace").empty();
+             $("#BirthPlace").empty();
+
+            $.ajax({
+                url: "http://192.168.1.34:88/api/DeathCertificate",
+                data: { citi: data },
+                async: false,
+                success: function (res) {
+
+                    $.each(res, function (i,r) {
+                        // $("#tbb1").append("<tr>   <td> "+r.citizen_first_name+" "+r.citizen_second_name +" "+r.citizen_third_name +" "+r.citizen_fourth_name+ " </td>  <td> "+ r.citizen_gender+" </td> <td> "+ r.citizen_birthDate +"</td> <td> "+r.state_name+" </td> <td> "+r.city_name+" </td>  </tr>");
+                        @*var d = r.citizen_birthDate;
+                        var d1 = @DateTime.Now;
+                        var diffirence = new Date(d1 - d);
+                        var days = diffirence / 1000 / 60 / 60 / 24;
+                        $("#Age").text(days);*@
+                        $("#Name").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+                        $("#Gender").text(r.citizen_gender);
+                        $("#egyptian").text("Egyption");
+                        $("#DeathDate").text(r.deceased_deathDate);
+                        $("#DeathPlace").text(r.deceased_deathPlace);
+                        $("#BirthPlace").text(r.citizen_birthPlace);
+
+                    });
+                }
+
+            });
+
+
+        });
+        }
+
+
+    });
+
+</script>
+<style>
+    /*strong {
+        font-size: small;
+    }*/
+</style>
+<div class="container mt-5">
+    <h2 class="mt-4">@ATM_Application.Languages.lang.Exporting_Death_Certificate</h2>
+    <hr />
+    @using (Html.BeginForm("Index", "ATMDeathCertificate", FormMethod.Get, new { id = "form" }))
+    {
+
+        <div class=" row">
+            <div class="col-md-5">
+                @*@Html.DropDownList("citi", null, " ", new { @class = "selectpicker", required = "required", data_live_search = "true" })*@
+                <label>@ATM_Application.Languages.lang.NationalId</label>
+                <select id="citi" required class="form-control">
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="container">
+            <div class="row mt-5">
+                <div class="col-2">
+
+                </div>
+
+                <div class="col-8" id="print">
+                    <div class="container mt-3" style="border:1px solid black">
+
+                        <div class="row mt-3 mb-3">
+
+                            <div class="col-4">
+                                <strong class="font-weight-bold ">  @ATM_Application.Languages.lang.TheEgyptianArabicRepublic </strong>
+                                <br />
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.Ministry_of_Interior </strong>
+                                <br />
+                                <strong class="font-weight-bold">@ATM_Application.Languages.lang.Civil_Registry_Sector</strong>
+                            </div>
+                            <div class="col-4 text-center">
+
+                                <strong class="font-weight-bold "> @ATM_Application.Languages.lang.Death_Document</strong>
+
+                                <div class="row">
+                                    <br />
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <strong class="font-weight-bold" id="NId"></strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-4">
+                                <div id="qrcode" class="float-md-right @ATM_Application.Languages.lang.mr_4"></div>
+
+                            </div>
+                        </div>
+
+                        <!-- D Information -->
+                        <div class="row">
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong class="font-weight-bold ">
+                                    @ATM_Application.Languages.lang.DeceasedInformation
+                                </strong>
+
+                            </div>
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                        </div>
+
+                        <!-- ////////////////////////   -->
+                        <div class="row mt-3 mb-3">
+                            <div class="col-9">
+                                <strong class="font-weight-bold">@ATM_Application.Languages.lang.Name : </strong><strong class="font-weight-bold" id="Name"></strong>
+                                <br />
+                                <strong class="font-weight-bold "> @ATM_Application.Languages.lang.Gender : </strong><strong class="font-weight-bold" id="Gender"> </strong>
+                                <br />
+                                <strong class="font-weight-bold">@ATM_Application.Languages.lang.Nationality : </strong><strong class="font-weight-bold" id="egyptian"></strong>
+                                <br />
+                                @*<strong class="font-weight-bold">Birth Place : </strong> <strong class="font-weight-bold" id="state"></strong> <strong id="City" class="font-weight-bold"></strong>*@
+
+                                <strong class="font-weight-bold">@ATM_Application.Languages.lang.MotherName  : </strong><strong id="MotherNamee" class="font-weight-bold"></strong>
+                                <br />
+                                <strong class="font-weight-bold ">@ATM_Application.Languages.lang.SocialStatus : </strong><strong class="font-weight-bold" id="SocialStatus"> </strong>
+                                <br />
+
+
+                            </div>
+
+
+
+
+
+
+                        </div>
+                        @*Father Information*@
+                        <div class="row">
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong class="font-weight-bold">
+                                    @ATM_Application.Languages.lang.DeathInformation
+                                </strong>
+
+                            </div>
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                        </div>
+
+                        <!-- ////////////////////////   -->
+                        <div class="row mt-3 mb-3">
+                            <div class="col-6">
+
+                                <strong class="font-weight-bold">@ATM_Application.Languages.lang.DeathDate   : </strong><strong class="font-weight-bold" id="DeathDate"></strong>
+                                <br /><br />
+                                <strong class="font-weight-bold">@ATM_Application.Languages.lang.DeathPlace : </strong> <strong class="font-weight-bold" id="DeathPlace"></strong> <strong id="City" class="font-weight-bold"></strong>
+
+
+
+
+                            </div>
+
+                            <div class="col-3 text-center">
+
+
+                            </div>
+                        </div>
+
+                        @*Mother Information*@
+                        <div class="row">
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong class="font-weight-bold">
+                                    @ATM_Application.Languages.lang.BirthInformation
+                                </strong>
+
+                            </div>
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                        </div>
+
+                        <!-- ////////////////////////   -->
+                        <div class="row mt-3 mb-3">
+                            <div class="col-6">
+
+                                <strong class="font-weight-bold">ِ@ATM_Application.Languages.lang.Age_at_Death   : </strong><strong class="font-weight-bold" id="Age"></strong>
+                                <br /><br />
+                                <strong class="font-weight-bold">ِ@ATM_Application.Languages.lang.BirthPlace : </strong> <strong class="font-weight-bold" id="BirthPlace"></strong> <strong id="City" class="font-weight-bold"></strong>
+
+
+
+
+                            </div>
+
+                            <div class="col-3 text-center">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+
+        <div class="row mt-4 mb-4">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                @*<input type="button" value=ِ@ATM_Application.Languages.lang.Export class="btn btn-default" id="btn" />*@
+                <!-- Button trigger modal -->
+                <button type="button" id="pr" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    @ATM_Application.Languages.lang.Print
+                </button>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
+
+    }
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModa2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelbody">
+                <h3> @ATM_Application.Languages.lang.WarningMessage</h3>
+                <h5> @ATM_Application.Languages.lang.WarningMessage1</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn">@ATM_Application.Languages.lang.yes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.No</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelbody">
+                <h3>@ATM_Application.Languages.lang.your_balance_is_not_sufficient</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.Close</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelbody">
+                <h3>@ATM_Application.Languages.lang.modal3</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.Close</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,1478 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/qrCodeJs/qrcode.min.js"></script>
+<script src="~/jasonday-printThis-0aa7434/printThis.js"></script>
+<script>
+    $(function () {
+
+
+        // balance validation
+        var fooorm = $("#form");
+        $("#form").validate();
+        $("#pr").click(function () {
+
+            if (fooorm.valid() == true) {
+
+
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Balance",
+                    data: { Id: Id },
+                    async: false,
+                    success: function (res) {
+
+                        if (res == "true") {
+
+                            $('#exampleModa2').modal('show');
+
+                        }
+                        else if (res == "false") {
+                            $('#exampleModal1').modal('show');
+                        }
+                        else {
+                            $('#exampleModal3').modal('show');
+                        }
+                    }
+
+                });
+
+            }
+
+        });
+
+
+
+
+        var seesion;
+        $.ajax({
+            url: "/Addresses/Sessionvalue",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                seesion = res;
+
+            }
+        });
+
+
+        // get wife or husband in dropdown
+
+        var Id;
+        $.ajax({
+
+            url: "/AtmLogin/GetCitizenId",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                Id = res;
+
+            }
+
+        });
+
+        var gender;
+        $.ajax({
+
+            url: "/AtmLogin/GetCitizenGender",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                gender = res;
+
+            }
+
+        });
+
+        $("#type").change(function () {
+
+            var data = $(this).val();
+            $("#wife").empty();
+            $.ajax({
+                url: "http://192.168.1.34/api/MarriageAndDivorce",
+                data: { social: data, hw: Id },
+                async: false,
+                success: function (res) {
+                    $("#wife").append("<option>   </option> ");
+
+                    $.each(res, function (i, r) {
+
+                        $("#wife").append("<option value='" + r.citizen_id + "'> " + r.citizen_national_id + "  </option> ");
+
+                    });
+                }
+
+            });
+
+
+
+
+
+
+
+        });
+
+
+
+
+        var seesion;
+        $.ajax({
+            url: "/AtmLogin/Sessionvalue",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                seesion = res;
+
+            }
+        });
+
+        if (seesion == "ar-EG") {
+
+            $.ajax({
+                url: "http://192.168.1.34/api/MarriageAndDivorce",
+                data: "",
+                async: false,
+                success: function (res) {
+                    $("#type").append("<option>   </option> ");
+
+                    $.each(res, function (i, r) {
+
+                        $("#type").append("<option value='" + r.social_status_type_id + "'> " + r.social_status_type_name_arabic + "  </option> ");
+
+                    });
+                }
+
+            });
+
+            $("#type").change(function () {
+
+
+
+                //--------------- Certificate Type -------------------
+                //--------------- Certificate Type -------------------
+                //--------------- Certificate Type -------------------
+                //--------------- Certificate Type -------------------
+
+                var tt = $("#type").val();
+                if (tt == 1) {
+                   
+                    $("#marraige").text("تاريخ الزواج");
+                    $("#hus").text("بيانات الزوج ");
+                    $("#wif").text("بيانات الزوجة");
+                    $("#mar").text("شهادة الزواج");
+                    $("#mi").text("بيانات الزواج");
+
+
+
+
+                }
+                else {
+
+                    $("#marraige").text("تاريخ الطلاق");
+                    $("#hus").text("بيانات الرجل");
+                    $("#wif").text("بيانات المرأه");
+                    $("#mar").text("شهادة الطلاق");
+                    $("#mi").text("بيانات الطلاق");
+
+
+
+
+                }
+
+
+
+            });
+
+
+            $("#wife").change(function () {
+
+                var data = $("#wife").val();
+
+                var tt = $("#type").val();
+                if (tt == 1) {
+
+                    if (gender == "Male") {
+                        $("#hus").text("بيانات الزوج");
+                        $("#wif").text("بيانات الزوجة ");
+                        //------------------- hasbund ---------------
+                        //------------------- hasbund ---------------
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",// "/MarriageAndDivorce/MarriageHusband",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    if (r.citizen_gender == "Male") {
+
+                                        $("#Gender").text("ذكر");
+                                    }
+                                    else {
+                                        $("#Gender").text("انثى");
+                                    }
+
+                                    $("#egyptian").text("مصري");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#Relegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#Relegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#Relegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#Relegion").text(r.citizen_relegion);
+                                    }
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+                        //------------------- wife -------------------
+                        //------------------- wife -------------------
+
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { h: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    $("#wGender").text("انثى");
+
+                                    $("#wegyptian").text("مصرية");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#wRelegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#wRelegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#wRelegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#wRelegion").text(r.citizen_relegion);
+                                    }
+
+
+
+                                });
+                            }
+
+                        });
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce", //"/MarriageAndDivorce/SocialStatusmarriage",
+                            data: { w: $("#wife").val(), h: Id },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+                    }
+                    else {
+                        $("#hus").text("بيانات الزوجة ");
+                        $("#wif").text("بيانات الزوج");
+
+                        //------------------- hasbund ---------------
+                        //------------------- hasbund ---------------
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",// "/MarriageAndDivorce/MarriageHusband",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    if (r.citizen_gender == "Male") {
+
+                                        $("#Gender").text("ذكر");
+                                    }
+                                    else {
+                                        $("#Gender").text("انثى");
+                                    }
+
+                                    $("#egyptian").text("مصري");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#Relegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#Relegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#Relegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#Relegion").text(r.citizen_relegion);
+                                    }
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+                        //------------------- wife -------------------
+                        //------------------- wife -------------------
+
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { h: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    $("#wGender").text("انثى");
+
+                                    $("#wegyptian").text("مصرية");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#wRelegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#wRelegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#wRelegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#wRelegion").text(r.citizen_relegion);
+                                    }
+
+
+
+                                });
+                            }
+
+                        });
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce", //"/MarriageAndDivorce/SocialStatusmarriage",
+                            data: { w: $("#wife").val(), h: Id },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+
+                    }
+
+
+
+                }
+                else {
+
+                    $("#marraige").text("تاريخ الطلاق");
+                    $("#hus").text("بيانات الرجل");
+                    $("#wif").text("بيانات المرأه");
+                    $("#mar").text("شهادة الطلاق");
+                    $("#mi").text("بيانات الطلاق");
+                    if (gender == "Male") {
+                        $("#hus").text("بيانات الزوج");
+                        $("#wif").text("بيانات الزوجة ");
+                        //------------------- hasbund ---------------
+                        //------------------- hasbund ---------------
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",// "/MarriageAndDivorce/MarriageHusband",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    if (r.citizen_gender == "Male") {
+
+                                        $("#Gender").text("ذكر");
+                                    }
+                                    else {
+                                        $("#Gender").text("انثى");
+                                    }
+
+                                    $("#egyptian").text("مصري");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#Relegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#Relegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#Relegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#Relegion").text(r.citizen_relegion);
+                                    }
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+                        //------------------- wife -------------------
+                        //------------------- wife -------------------
+
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { h: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    $("#wGender").text("انثى");
+
+                                    $("#wegyptian").text("مصرية");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#wRelegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#wRelegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#wRelegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#wRelegion").text(r.citizen_relegion);
+                                    }
+
+
+
+                                });
+                            }
+
+                        });
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce", //"/MarriageAndDivorce/SocialStatusmarriage",
+                            data: { w: $("#wife").val(), h: Id },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+                    }
+                    else {
+
+                        $("#hus").text("بيانات المرأه");
+                        $("#wif").text("بيانات الرجل ");
+
+                        //------------------- hasbund ---------------
+                        //------------------- hasbund ---------------
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",// "/MarriageAndDivorce/MarriageHusband",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    if (r.citizen_gender == "Male") {
+
+                                        $("#Gender").text("ذكر");
+                                    }
+                                    else {
+                                        $("#Gender").text("انثى");
+                                    }
+
+                                    $("#egyptian").text("مصري");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#Relegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#Relegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#Relegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#Relegion").text(r.citizen_relegion);
+                                    }
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+                        //------------------- wife -------------------
+                        //------------------- wife -------------------
+
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { h: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name_arabic + " " + r.citizen_second_name_arabic + " " + r.citizen_third_name_arabic + " " + r.citizen_fourth_name_arabic);
+
+                                    $("#wGender").text("انثى");
+
+                                    $("#wegyptian").text("مصرية");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+
+                                    if (r.citizen_relegion == "Muslim") {
+                                        $("#wRelegion").text("مسلم");
+                                    }
+                                    else if (r.citizen_relegion == "Cristian") {
+                                        $("#wRelegion").text("مسيحي");
+                                    }
+                                    else if (r.citizen_relegion == "Jewish") {
+                                        $("#wRelegion").text("يهودي");
+                                    }
+                                    else {
+                                        $("#wRelegion").text(r.citizen_relegion);
+                                    }
+
+
+
+                                });
+                            }
+
+                        });
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce", //"/MarriageAndDivorce/SocialStatusmarriage",
+                            data: { w: $("#wife").val(), h: Id },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+
+                    }
+
+
+
+
+                }
+            });
+
+
+
+
+        }
+        else {
+
+            $.ajax({
+                type: "Get",
+                url: "http://192.168.1.34:88/api/MarriageAndDivorce",
+                data: "",
+                async: false,
+                success: function (res) {
+                    $("#type").append("<option>   </option> ");
+
+                    $.each(res, function (i, r) {
+
+                        $("#type").append("<option value='" + r.social_status_type_id + "'> " + r.social_status_type_name + "  </option> ");
+
+                    });
+                }
+
+            });
+            $("#type").change(function () {
+
+
+
+                var tt = $("#type").val();
+                if (tt == 1) {
+                    $("#marraige").text("Marriage Date");
+                    $("#hus").text("Husband information");
+                    $("#wif").text("Wife information");
+                    $("#mar").text("Marriage Document");
+                    $("#mi").text("Marriage information");
+
+
+
+
+                }
+                else {
+
+                    $("#marraige").text("Divorce Date");
+                    $("#hus").text("Man information");
+                    $("#wif").text("Lady information");
+                    $("#mar").text("Divorce Document");
+                    $("#mi").text("Divorce information");
+
+
+
+
+                }
+
+
+
+
+
+            });
+
+
+
+            $("#wife").change(function () {
+
+
+                var data = $("#wife").val();
+
+                var tt = $("#type").val();
+                if (tt == 1) {
+
+                    if (gender == "Male") {
+                        $("#hus").text("Husband information");
+                        $("#wif").text("Wife information");
+                        //------------------- hasbund ---------------
+                        //------------------- hasbund ---------------
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce",// "/MarriageAndDivorce/MarriageHusband",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#Gender").text(r.citizen_gender);
+
+                                    $("#egyptian").text("Egyption");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+                                    $("#Relegion").text(r.citizen_relegion);
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+                        //------------------- wife -------------------
+                        //------------------- wife -------------------
+
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { h: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#wGender").text(r.citizen_gender);
+
+                                    $("#wegyptian").text("Egyption");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+                                    $("#wRelegion").text(r.citizen_relegion);
+
+
+                                });
+                            }
+
+                        });
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce", //"/MarriageAndDivorce/SocialStatusmarriage",
+                            data: { w: $("#wife").val(), h: Id },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+                    }
+                    else {
+                        $("#hus").text("Wife information ");
+                        $("#wif").text("Husband information");
+
+                        //------------------- hasbund ---------------
+                        //------------------- hasbund ---------------
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce",// "/MarriageAndDivorce/MarriageHusband",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#Gender").text(r.citizen_gender);
+
+                                    $("#egyptian").text("Egyption");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+                                    $("#Relegion").text(r.citizen_relegion);
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+                        //------------------- wife -------------------
+                        //------------------- wife -------------------
+
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { h: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#wGender").text(r.citizen_gender);
+
+                                    $("#wegyptian").text("Egyption");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+                                    $("#wRelegion").text(r.citizen_relegion);
+
+
+                                });
+                            }
+
+                        });
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce", //"/MarriageAndDivorce/SocialStatusmarriage",
+                            data: { w: $("#wife").val(), h: Id },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+
+                    }
+
+
+
+                }
+                else {
+
+                    $("#marraige").text("Divorce Date");
+                    $("#hus").text("Man information");
+                    $("#wif").text("Lady information");
+                    $("#mar").text("Divorce Document");
+                    $("#mi").text("Divorce information");
+                    if (gender == "Male") {
+
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce",//"/MarriageAndDivorce/SocialStatusDivorce",
+                            data: { huss: Id, wifee: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+                        //-------------------
+
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#Gender").text(r.citizen_gender);
+
+                                    $("#egyptian").text("Egyption");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+                                    $("#Relegion").text(r.citizen_relegion);
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+
+                        //---------------------------
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { w: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#wGender").text(r.citizen_gender);
+
+                                    $("#wegyptian").text("Egyption");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+                                    $("#wRelegion").text(r.citizen_relegion);
+
+
+                                });
+                            }
+
+                        });
+
+                    }
+                    else {
+                        $("#hus").text("Lady information");
+                        $("#wif").text("man information");
+                        $.ajax({
+                            url: "http://192.168.1.34:88/api/MarriageAndDivorce",//"/MarriageAndDivorce/SocialStatusDivorce",
+                            data: { huss: Id, wifee: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+
+
+                                $("#mm").text(res);
+
+                            }
+
+                        });
+                        //-------------------
+
+                        $("#Name").empty();
+
+                        $("#Gender").empty();
+
+                        $("#egyptian").empty();
+
+                        $("#BirthDATE").empty();
+                        $("#Relegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",
+                            data: { h: Id },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+
+                                    $("#Name").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#Gender").text(r.citizen_gender);
+
+                                    $("#egyptian").text("Egyption");
+
+                                    $("#BirthDATE").text(r.citizen_birthDate);
+                                    $("#Relegion").text(r.citizen_relegion);
+
+
+
+
+
+                                });
+                            }
+
+                        });
+
+
+                        //---------------------------
+                        $("#wName").empty();
+
+                        $("#wGender").empty();
+
+                        $("#wegyptian").empty();
+
+                        $("#wBirthDATE").empty();
+                        $("#wRelegion").empty();
+                        $.ajax({
+                            url: "http://192.168.1.34/api/MarriageAndDivorce",//"/MarriageAndDivorce/MarriageWife",
+                            data: { w: $("#wife").val() },
+                            async: false,
+                            success: function (res) {
+
+                                $.each(res, function (i, r) {
+                                    $("#wName").text(r.citizen_first_name + " " + r.citizen_second_name + " " + r.citizen_third_name + " " + r.citizen_fourth_name);
+
+                                    $("#wGender").text(r.citizen_gender);
+
+                                    $("#wegyptian").text("Egyption");
+
+                                    $("#wBirthDATE").text(r.citizen_birthDate);
+                                    $("#wRelegion").text(r.citizen_relegion);
+
+
+                                });
+                            }
+
+                        });
+                    }
+
+
+
+                }
+            });
+
+        }
+
+
+        //Print Marriage or Divorce Document
+        $('#btn').click(function () {
+
+            $("#print").printThis({
+
+                debug: false,               // show the iframe for debugging
+                importCSS: true,            // import parent page css
+                importStyle: false,         // import style tags
+                printContainer: true,       // print outer container/$.selector
+                loadCSS: "C:\Users\Dashmala\Source\Repos\Servicely\Servicely\Content\bootstrap.css",                // path to additional css file - use an array [] for multiple
+                pageTitle: "",              // add title to print page
+                removeInline: false,        // remove inline styles from print elements
+                removeInlineSelector: "*",  // custom selectors to filter inline styles. removeInline must be true
+                printDelay: 333,            // variable print delay
+                header: null,               // prefix to html
+                footer: null,               // postfix to html
+                base: false,                // preserve the BASE tag or accept a string for the URL
+                formValues: true,           // preserve input/form values
+                canvas: false,              // copy canvas content
+                doctypeString: '<!DOCTYPE html>', // enter a different doctype for older markup
+                removeScripts: false,       // remove script tags from print content
+                copyTagClasses: false,      // copy classes from the html & body tag
+                beforePrintEvent: null,     // callback function for printEvent in iframe
+                beforePrint: null,          // function called before iframe is filled
+                afterPrint: null            // function called before iframe is removed
+
+            });
+              $.ajax({
+                    url: "http://192.168.1.34:88/api/Balance",
+                    data: { Id: Id, balance: 40 },
+                  async: false,
+
+                  success: function (res) {
+
+                     const Toast = Swal.mixin({
+
+
+                        toast: true,
+
+                        position: 'top-end',
+
+                        showConfirmButton: false,
+
+                        timer: 5000,
+                        onOpen: (toast) => {
+
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+
+                        }
+
+
+                    });
+
+
+                    Toast.fire({
+
+                        type: 'success',
+
+
+                        title: res
+
+
+                    });
+
+                }
+
+            });
+        });
+
+
+        var qr;
+        $("#qrcode").empty();
+        $.ajax({
+
+            url: "http://192.168.1.34:88/api/QRcode",
+            data: { cid: Id },
+            async: false,
+            success: function (res) {
+
+                qr = res;
+
+            }
+
+        });
+
+        var q = new QRCode("qrcode", {
+            text: qr,
+            width: 60,
+            height: 60,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        $(document).ready(function () {
+            $("#citi").select2();
+
+        });
+
+    });
+
+</script>
+
+<div class="container-fluid">
+    <h2 class="mt-4"> @ATM_Application.Languages.lang.MarriagAndDevorceCertificate</h2>
+    <hr />
+    <div class="container-fluid mt-5">
+        @using (Html.BeginForm("Index","MarriageAndDivorce",FormMethod.Get , new { id="form"}))
+        {
+            <div class=" row">
+                <div class="col-md-3">
+                    <lable>  @ATM_Application.Languages.lang.SocialStatusType </lable>
+                    @*@Html.DropDownList("tybe", null, " ", new { @class = "selectpicker", required = "required", data_live_search = "true" })*@
+                    <select class="form-control" id="type" name="type" required>
+                    </select>
+
+                </div>
+                <div class="col-md-3">
+                    <lable>  @ATM_Application.Languages.lang.NationalId </lable>
+                    <select class="form-control" id="wife" required>
+                    </select>
+
+                </div>
+
+
+            </div>
+            <!--  /////////////// /////////////// ////////////////// //////////////// ////////// -->
+            <div class="row mt-5">
+                <div class="col-2">
+
+                </div>
+
+                <div class="col-8" id="print">
+                    <div class="container mt-3" style="border:1px solid black">
+
+                        <div class="row mt-3 mb-3">
+
+                            <div class="col-md-4">
+                                <strong class="font-weight-bold ">   @ATM_Application.Languages.lang.TheEgyptianArabicRepublic </strong>
+                                <br />
+                                <strong class="font-weight-bold">  @ATM_Application.Languages.lang.Ministry_of_Interior </strong>
+                                <br />
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.Civil_Registry_Sector</strong>
+                            </div>
+                            <div class="col-md-4 text-center">
+
+                                <strong class="font-weight-bold " id="mar">  @ATM_Application.Languages.lang.MarriageDocument</strong>
+
+                                <div class="row">
+                                    <br />
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <strong class="font-weight-bold" id="NId"></strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div id="qrcode" class="float-md-right @ATM_Application.Languages.lang.mr_4"></div>
+
+                            </div>
+                        </div>
+
+                        <!-- D Information -->
+                        <div class="row">
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong class="font-weight-bold " id="hus">
+                                    @ATM_Application.Languages.lang.HusbandInformation
+                                </strong>
+
+                            </div>
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                        </div>
+
+                        <!-- ////////////////////////   -->
+                        <div class="row mt-3 mb-3">
+                            <div class="col-9">
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.Name : </strong><strong class="font-weight-bold" id="Name"></strong>
+                                <br />
+                                <strong class="font-weight-bold ">  @ATM_Application.Languages.lang.Gender : </strong><strong class="font-weight-bold" id="Gender"> </strong>
+                                <br />
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.Nationality : </strong><strong class="font-weight-bold" id="egyptian"></strong>
+                                <br />
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.BirthDate : </strong> <strong class="font-weight-bold" id="BirthDATE"></strong> <strong id="City" class="font-weight-bold"></strong>
+
+                                <br />
+                                <strong class="font-weight-bold "> @ATM_Application.Languages.lang.Relegion : </strong><strong class="font-weight-bold" id="Relegion"> </strong>
+                                <br />
+
+
+                            </div>
+
+
+
+
+
+
+                        </div>
+                        @*wife Information*@
+                        <div class="row">
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong class="font-weight-bold" id="wif">
+                                    @ATM_Application.Languages.lang.WifeInformation
+                                </strong>
+
+                            </div>
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                        </div>
+
+                        <!-- ////////////////////////   -->
+                        <div class="row mt-3 mb-3">
+                            <div class="col-9">
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.Name : </strong><strong class="font-weight-bold" id="wName"></strong>
+                                <br />
+                                <strong class="font-weight-bold ">  @ATM_Application.Languages.lang.Gender : </strong><strong class="font-weight-bold" id="wGender"> </strong>
+                                <br />
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.Nationality : </strong><strong class="font-weight-bold" id="wegyptian"></strong>
+                                <br />
+                                <strong class="font-weight-bold"> @ATM_Application.Languages.lang.BirthDate : </strong> <strong class="font-weight-bold" id="wBirthDATE"></strong> <strong id="City" class="font-weight-bold"></strong>
+
+                                <br />
+                                <strong class="font-weight-bold "> @ATM_Application.Languages.lang.Relegion : </strong><strong class="font-weight-bold" id="wRelegion"> </strong>
+                                <br />
+
+
+                            </div>
+
+                            <div class="col-3 text-center">
+
+
+                            </div>
+                        </div>
+
+                        @*Marriage Information*@
+                        <div class="row">
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                            <div class="col-4 text-center">
+                                <strong class="font-weight-bold" id="mi">
+                                    @ATM_Application.Languages.lang.MarriageInformation
+                                </strong>
+
+                            </div>
+                            <div class="col-4">
+                                <hr class="hr-bold" />
+                            </div>
+                        </div>
+
+                        <!-- ////////////////////////   -->
+                        <div class="row mt-3 mb-3">
+                            <div class="col-3">
+
+                                <strong class="font-weight-bold" id="marraige">ِ @ATM_Application.Languages.lang.MarriageDateWithPoint    : </strong> &nbsp; &nbsp;<strong class="font-weight-bold" id="mm"></strong>
+
+
+
+
+                            </div>
+
+                            <div class="col-3 text-center">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+
+                </div>
+
+
+
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="button" value=@ATM_Application.Languages.lang.Export class="btn btn-default" id="pr" />
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModa2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelbody">
+                <h3> @ATM_Application.Languages.lang.WarningMessage</h3>
+                <h5> @ATM_Application.Languages.lang.WarningMessage1</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn">@ATM_Application.Languages.lang.yes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.No</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelbody">
+                <h3>@ATM_Application.Languages.lang.your_balance_is_not_sufficient</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.Close</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@ATM_Application.Languages.lang.warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelbody">
+                <h3>@ATM_Application.Languages.lang.modal3</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">@ATM_Application.Languages.lang.Close</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>

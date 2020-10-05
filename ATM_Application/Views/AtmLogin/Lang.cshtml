@@ -1,0 +1,259 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Servicly</title>
+    <!-- Font Awesome -->
+    @*<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">*@
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <!-- Bootstrap core CSS -->
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Material Design Bootstrap -->
+    <link href="~/css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="~/css/style.min.css" rel="stylesheet">
+
+    <link href="~/css/StyleSheet1.css" rel="stylesheet" />
+
+    <link href="~/AdminLTE-3.0.1/dist/css/@ATM_Application.Languages.lang.ApplicationDirection" rel="stylesheet" />
+    <link href="~/js/@ATM_Application.Languages.lang.arabic_css" rel="stylesheet" />
+    @*<link href="~/AdminLTE-3.0.1/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet" />*@
+    <link href="~/AdminLTE-3.0.1/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    @*<script type="text/javascript" src="~/js/jquery-3.4.1.min.js"></script>*@
+    <!-- JQuery -->
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="~/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+
+    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="~/js/mdb.min.js"></script>
+    @*<script src="~/AdminLTE-3.0.1/plugins/sweetalert2/sweetalert2.min.js"></script>*@
+    <script src="~/AdminLTE-3.0.1/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/AdminLTE-3.0.1/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/AdminLTE-3.0.1/plugins/jquery-validation/additional-methods.js"></script>
+    <!-- Initializations -->
+    <script type="text/javascript">
+        // Animations initialization
+        new WOW().init();</script>
+
+    <style>
+        .button {
+        
+        background: rgba(254, 254, 254, 0.00);
+        color: #FFF;
+        font-size: 16px;
+       
+        
+        border-radius: 15px;
+        cursor: pointer;
+        border-color: #FFF;
+        outline: #FFF;
+        border: solid;
+    }
+        .button:hover {
+            color: rgb(0, 0, 0);
+            background-color: #FFF;
+        }
+        .btn-huge{
+    padding-top:20px;
+    padding-bottom:20px;
+}
+        html, body {
+            height: 100%;
+        }
+
+        .divider {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            height: 1px;
+            overflow: hidden;
+            background: #e9ecef;
+        }
+
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            margin-bottom: .5rem;
+            font-family: inherit;
+            font-weight: 400;
+            line-height: 1.2;
+            color: inherit;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        .app-theme-white.app-container {
+            background: #f1f4f6;
+        }
+
+        .error {
+            color: red;
+        }
+
+
+
+        .loading-overlay {
+            background: rgba(61, 60, 59, 0.65);
+
+            color: #FFF;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+        }
+        .spinner {
+    margin: 300px auto;
+    width: 70px;
+    height: 60px;
+    text-align: end;
+    font-size: 10px;
+}
+    </style>
+    
+   
+
+</head>
+<body style="overflow:hidden;">
+
+    <div class=" app-container app-theme-white h-100  ">
+        <div class="app-container">
+            <div class="h-100">
+                <div class="h-100 no-gutters row">
+
+                    <div class="d-none d-lg-block col-lg-12">
+                        <!--Carousel Wrapper-->
+                        <div id="carousel-example-1z" class="carousel slide carousel-fade h-100" data-ride="carousel">
+
+                            @*Indicators
+                            <ol class="carousel-indicators">
+                                <li data-target="#carousel-example-1z" data-slide-to="0" class="active"></li>
+                                <li data-target="#carousel-example-1z" data-slide-to="1"></li>
+                                <li data-target="#carousel-example-1z" data-slide-to="2"></li>
+                            </ol>
+                            /.Indicators*@
+                            <!--Slides-->
+                            <div class="carousel-inner" role="listbox">
+
+                                <!--First slide-->
+                                <div class="carousel-item active">
+                                    <div class="view" style="background-image: url('../../img/wp2275698.jpg'); background-repeat: no-repeat; background-size: cover; background-position:center;">
+
+                                        <!-- Mask & flexbox options-->
+                                        <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+                                        </div>
+                                        <!-- Mask & flexbox options-->
+
+                                    </div>
+                                </div>
+                                <!--/First slide-->
+                                <!--Second slide-->
+                                <div class="carousel-item">
+                                    <div class="view" style="background-image: url('../../img/1366x768-egypt-pyramids.JPG'); background-repeat: no-repeat; background-size: cover;  background-position:center;">
+
+                                        <!-- Mask & flexbox options-->
+                                        <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+
+
+                                        </div>
+                                        <!-- Mask & flexbox options-->
+
+                                    </div>
+                                </div>
+                                <!--/Second slide-->
+                                <!--Third slide-->
+                                <div class="carousel-item">
+                                    <div class="view" style="background-image: url('../../img/original.jpg'); background-repeat: no-repeat; background-size: cover; background-position:center;">
+
+                                        <!-- Mask & flexbox options-->
+                                        <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+
+
+                                        </div>
+                                        <!-- Mask & flexbox options-->
+
+                                    </div>
+                                </div>
+                                <!--/Third slide-->
+
+                            </div>
+                            <!--/.Slides-->
+                            @*Controls
+                            <a class="carousel-control-prev" href="#carousel-example-1z" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carousel-example-1z" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                            /.Controls*@
+
+                        </div>
+                        <!--/.Carousel Wrapper-->
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @*start section of loading page*@
+    <section class="loading-overlay" >
+
+        <div class="container" style=" height:100%;">
+            <div style="margin-top: 25%;">
+
+
+             
+                <div class="row" style="margin-bottom:1.2rem; display: block;   text-align: center;">
+                    <div>
+                        <img src="~/img/1222.jpeg" width="100" height="100" class=" mb-4 brand-image img-circle elevation-2" style="opacity: .8">
+
+                    </div>
+                    <h3 class="pb-1">GSE General Services of Egypt</h3>
+                </div>
+
+                <div class="row mt-5" style="margin-top:1.5rem">
+                    <div class="col-md-4 text-center">
+                        @*<a href="/Languages11/" class="btn btn-outline-default btn-lg">English</a>*@
+                        <a href="/Languages11/English" class="btn button  btn-lg btn-block btn-huge text-lg-center font-weight-bolder" style="font-size:x-large;" >English</a>
+
+                    </div>
+                    <div class="col-4">
+
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="/Languages11/Arabic" class="btn button btn-lg btn-block btn-huge text-lg-center font-weight-bolder" style="font-size:x-large;" >العربية</a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+     @*/ End of section of loading page*@ 
+
+</body>
+</html>

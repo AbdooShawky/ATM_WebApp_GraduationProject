@@ -1,0 +1,728 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+
+    .error {
+        color: red;
+    }
+</style>
+
+
+<script>
+    $(function () {
+        var Id;
+        $.ajax({
+
+            url: "/AtmLogin/GetCitizenId",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                Id = res;
+
+            }
+
+        });
+        var seesion;
+        $.ajax({
+            url: "/AtmLogin/Sessionvalue",
+            data: "",
+            async: false,
+            success: function (res) {
+
+                seesion = res;
+
+            }
+        });
+        if (seesion == "ar-EG") {
+
+            // health care type 
+            $.ajax({
+
+                url: "http://192.168.1.34:88/api/HealthCare_Type",
+                data: "",
+                async: false,
+                success: function (res) {
+                    $("#HCtype").append("<option value=''>  </option>");
+                    $.each(res, function (i, r) {
+
+                        $("#HCtype").append("<option value='" + r.healthcare_type_id + "'>" + r.healthcare_type_name_arabic + " </option>");
+
+
+                    });
+
+                }
+
+            });
+            // states
+            $.ajax({
+                url: "http://192.168.1.34:88/api/States",
+                data: "",
+                async: false,
+                success: function (res) {
+                    $("#State").append("<option value=''>  </option>");
+                    $.each(res, function (i, row) {
+
+                        $("#State").append("<option value='" + row.state_id + "'> " + row.state_arabic_name + " </option>");
+                    });
+
+
+
+                }
+
+
+
+            });
+
+            $("#State").change(function () {
+                var data = $("#State").val();
+                $("#city").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Cities",
+                    data: { SId: data },
+                    async: false,
+                    success: function (res) {
+                        $("#city").append("<option value=''>  </option>");
+                        $.each(res, function (i, row) {
+
+                            $("#city").append("<option value='" + row.city_id + "'> " + row.city_arabic_name + " </option>");
+                        });
+
+
+
+                    }
+
+
+
+                });
+
+
+
+
+            });
+
+
+
+            $("#city").change(function () {
+                var ss = $("#city").val();
+                $("#region").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Regions",
+                    data: { CId: ss },
+                    async: false,
+                    success: function (res) {
+                        $("#region").append("<option value=''>  </option>");
+                        $.each(res, function (i, row) {
+
+                            $("#region").append("<option value='" + row.region_id + "'> " + row.region_arabic_name + " </option>");
+                        });
+
+                    }
+                });
+
+
+
+
+
+            });
+
+            $("#region").change(function () {
+                var data = $("#region").val();
+                $("#district").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Districts",
+                    data: { rId: data },
+                    async: false,
+                    success: function (res) {
+                        $("#district").append("<option value=''>  </option>");
+                        $.each(res, function (i, r) {
+
+                            $("#district").append("<option value='" + r.district_id + "'>  " + r.district_arabic_name + " </option>");
+
+                        });
+                    }
+
+
+                });
+
+
+
+            });
+
+            $("#district").change(function () {
+
+                var data = $("#district").val();
+                var typ = $("#HCtype").val();
+                $("#hospital").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { dis: data, tid: typ },
+                    async: false,
+                    success: function (res) {
+
+                        $.each(res, function (i, r) {
+
+                            $("#hospital").append("<option value='" + r.hospital_id + "'>  " + r.hospital_name_arabic + " </option>");
+
+                        });
+                    }
+
+
+                });
+
+
+            });
+
+
+            $("#hospital").change(function () {
+
+                var data = $("#hospital").val();
+                $("#spec").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { hid: data },
+                    async: false,
+                    success: function (res) {
+
+                        $.each(res, function (i, r) {
+
+                            $("#spec").append("<option value='" + r.specialization_id + "'>" + r.specialization_name_arabic + "</option>");
+
+
+                        });
+                    }
+                });
+
+
+
+
+
+            });
+
+            $("#spec").change(function () {
+                var data = $("#spec").val();
+                var hospital = $("#hospital").val();
+                $("#doctors").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { sid: data, hoss: hospital },
+                    async: false,
+                    success: function (res) {
+
+                        $.each(res, function (i, r) {
+
+                            $("#doctors").append("<option value='" + r.doctor_id + "'>" + r.citizen_first_name_arabic  + " " + r.citizen_fourth_name_arabic + "</option>");
+
+
+                        });
+
+
+                    }
+
+
+
+
+                });
+
+
+            });
+
+
+            $("#doctors").change(function () {
+
+                var data = $("#doctors").val();
+                $("#schedule").empty();
+                $.ajax({
+
+
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { docId: data , healtId:$("#hospital").val() },
+                    success: function (res) {
+
+                        $.each(res, function (i, r) {
+
+                            $("#schedule").append("<option value=" + r.schedule_id + "> " + r.checkup_date + " " + r.checkup_start + " " + r.checkup_end + " </option>");
+                        });
+
+
+                    }
+                })
+
+
+
+            });
+            $(document).ready(function () {
+
+                $('#exampleModalCenter').modal('show')
+
+            });
+
+        }
+        else
+        {
+        //---------------------- Doctor reservation Api submitting ------------------
+        //---------------------- Doctor reservation Api submitting ------------------
+        //---------------------- Doctor reservation Api submitting ------------------
+        //---------------------- Doctor reservation Api submitting ------------------
+            $("#form").validate();
+
+        $("#btn").click(function () {
+            if ( $("#form").valid() == true) {
+
+                //var gov = $("#id").val();
+                var HealthCarId = $("#hospital").val();
+                var Appointment = $("#schedule").val();
+               
+               
+                var HealthCare = {
+                    healthcareReservation_id: 0,
+                    healthcareReservation_hospital_id: HealthCarId,
+                    Reservation_date: null,
+                    healthcareReservation_isDeleted: false,
+                    healthcareReservation_doctor_id: $("#doctors").val(),
+                     healthcareReservation_citizen_id: Id, 
+                    healthcareReservation_Code: null,
+                    healthcareReservation_cancel: false,
+                    TransactionDate:null,
+                   
+             
+                    schedule: Appointment,
+                    Ar: false
+                }
+                
+                
+                $.ajax({
+                    type: "Post",
+                    url: "http://192.168.1.34:88/api/DoctorReservation",
+                    data: JSON.stringify(HealthCare),
+                    contentType:"application/json",
+                    async: false,
+                    success: function (res) {
+                       
+                        
+                        if (res == "successfully reserved check your email to know the details") {
+                             const Toast = Swal.mixin({
+
+
+                                toast: true,
+
+                                position: 'top-end',
+
+                                showConfirmButton: false,
+
+                                timer: 5000
+
+                            });
+
+
+                            Toast.fire({
+
+                                type: 'success',
+
+
+                                title: res
+
+
+                            });
+
+
+                        } else  {
+                             const Toast = Swal.mixin({
+
+
+                                toast: true,
+
+                                position: 'top-end',
+
+                                showConfirmButton: false,
+
+                                timer: 5000
+
+                            });
+
+
+                            Toast.fire({
+
+                                type: 'error',
+
+
+                                title: res
+
+
+                            });
+
+
+                        }
+                    
+                        
+
+
+
+                    }
+
+
+
+                });
+
+                
+                	
+	
+
+            }
+
+
+        });
+            //alert("elseeeeeeeeeee");
+            // health care type 
+            $.ajax({
+
+                url: "http://192.168.1.34:88/api/HealthCare_Type",
+                data: "",
+                async: false,
+                success: function (res) {
+                    $("#HCtype").append("<option value=''>  </option>");
+                    $.each(res, function (i, r) {
+
+                        $("#HCtype").append("<option value='" + r.healthcare_type_id + "'>" + r.healthcare_type_name + " </option>");
+
+
+                    });
+
+                }
+
+            });
+            $.ajax({
+                url: "http://192.168.1.34:88/api/States",
+                data: "",
+                async: false,
+                success: function (res) {
+                    $("#State").append("<option value=''>  </option>");
+                    $.each(res, function (i, row) {
+
+                        $("#State").append("<option value='" + row.state_id + "'> " + row.state_name + " </option>");
+                    });
+
+
+
+                }
+
+
+
+            });
+            $("#State").change(function () {
+                var data = $("#State").val();
+                $("#city").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Cities",
+                    data: { SId: data },
+                    async: false,
+                    success: function (res) {
+                        $("#city").append("<option value=''>  </option>");
+                        $.each(res, function (i, row) {
+
+                            $("#city").append("<option value='" + row.city_id + "'> " + row.city_name + " </option>");
+                        });
+
+
+
+                    }
+
+
+
+                });
+
+
+
+
+            });
+
+
+
+            $("#city").change(function () {
+                var ss = $("#city").val();
+                $("#region").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Regions",
+                    data: { CId: ss },
+                    async: false,
+                    success: function (res) {
+                        $("#region").append("<option value=''>  </option>");
+                        $.each(res, function (i, row) {
+
+                            $("#region").append("<option value='" + row.region_id + "'> " + row.region_name + " </option>");
+                        });
+
+                    }
+                });
+
+
+
+
+
+            });
+
+            $("#region").change(function () {
+                var data = $("#region").val();
+                $("#district").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Districts",
+                    data: { rId: data },
+                    async: false,
+                    success: function (res) {
+                        $("#district").append("<option value=''>  </option>");
+                        $.each(res, function (i, r) {
+
+                            $("#district").append("<option value='" + r.district_id + "'>  " + r.district_name + " </option>");
+
+                        });
+                    }
+
+
+                });
+
+
+
+            });
+
+            $("#district").change(function () {
+
+                var data = $("#district").val();
+                var typ = $("#HCtype").val();
+                $("#hospital").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { dis: data, tid: typ },
+                    async: false,
+                    success: function (res) {
+                         $("#hospital").append("<option value=''>  </option>");
+                        $.each(res, function (i, r) {
+
+                            $("#hospital").append("<option value='" + r.hospital_id + "'>  " + r.hospital_name + " </option>");
+
+                        });
+                    }
+
+
+                });
+
+
+            });
+
+
+            $("#hospital").change(function () {
+
+                var data = $("#hospital").val();
+                $("#spec").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { hid: data },
+                    async: false,
+                    success: function (res) {
+                        $("#spec").append("<option value=''>  </option>");
+                        $.each(res, function (i, r) {
+
+                            $("#spec").append("<option value='" + r.specialization_id + "'>" + r.specialization_name + "</option>");
+
+
+                        });
+                    }
+                });
+
+
+
+
+
+            });
+
+            $("#spec").change(function () {
+                var data = $("#spec").val();
+                var hospital = $("#hospital").val();
+                $("#doctors").empty();
+                $.ajax({
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { sid: data, hoss: hospital },
+                    async: false,
+                    success: function (res) {
+                         $("#doctors").append("<option value=''>  </option>");
+                        $.each(res, function (i, r) {
+
+                            $("#doctors").append("<option value='" + r.doctor_id + "'>" + r.citizen_first_name + " " + r.citizen_fourth_name + "</option>");
+
+
+                        });
+
+
+                    }
+
+
+
+
+                });
+
+
+            });
+
+
+            $("#doctors").change(function () {
+
+                var data = $("#doctors").val();
+                $("#schedule").empty();
+                $.ajax({
+
+
+                    url: "http://192.168.1.34:88/api/Citizen",
+                    data: { docId: data , healtId:$("#hospital").val() },
+                    success: function (res) {
+
+                        $.each(res, function (i, r) {
+
+                            $("#schedule").append("<option value=" + r.schedule_id + "> " + r.checkup_date + " " + r.checkup_start + " " + r.checkup_end + " </option>");
+                        });
+
+
+                    }
+                });
+
+
+            });
+        }
+
+
+
+    });
+</script>
+<div class="container-fluid">
+    @*@if (ViewBag.drmsg != null)
+    {
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">  @ATM_Application.Languages.lang.VaccinationReservation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label>@ViewBag.drmsg</label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">  @ATM_Application.Languages.lang.Close</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }*@
+
+    <h2>  @ATM_Application.Languages.lang.Healthcare @ATM_Application.Languages.lang.Reservations</h2>
+    
+    <form id="form">
+        <div class="row">
+            <div class="col-4 mt-3">
+                <label class="label">  @ATM_Application.Languages.lang.HealthcareType</label>
+                @*@Html.DropDownList("HCtype", null, "", new { @class = "form-control", required = "required" })*@
+                <select id="HCtype" name="HCtype" class="form-control" required>
+                </select>
+            </div>
+        </div>
+
+
+
+        <div class="row ">
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.State</label>
+                @*@Html.DropDownList("State", null, "", htmlAttributes: new { @class = "form-control" })*@
+                <select id="State" name="State" class="form-control" required>
+                </select>
+
+            </div>
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.City</label>
+                <select class="form-control" id="city"></select>
+            </div>
+
+
+
+
+
+        </div>
+        <div class="row">
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.Region</label>
+                <select class="form-control" id="region" name="district_region_id"></select>
+
+
+            </div>
+
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.District</label>
+                <select class="form-control" id="district" name="address_district_id">
+                </select>
+                
+
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.Hospital</label>
+                <select class="form-control" id="hospital" name="healthcareReservation_hospital_id">
+                </select>
+
+
+            </div>
+
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.Specializations</label>
+                <select class="form-control" id="spec" name="hospitalDoctor_hospital">
+                </select>
+
+
+            </div>
+
+
+
+            <div class="col-3 mt-3">
+                <label class="label">   @ATM_Application.Languages.lang.Doctors</label>
+                <select class="form-control" id="doctors" name="healthcareReservation_doctor_id">
+                </select>
+
+
+            </div>
+        </div>
+        <div class="row mt-3">
+
+            <div class="col-3">
+                <label>  @ATM_Application.Languages.lang.Appointemnts</label>
+
+                <select id="schedule" class="form-control" required name="schedule">
+                </select>
+
+
+
+            </div>
+
+        </div>
+
+
+        <div class="row mt-5 ">
+            <div class="col-3">
+                <input type="button" id="btn" class="btn btn-default" value=@ATM_Application.Languages.lang.Create />
+            </div>
+        </div>
+        <div class="form-actions no-color">
+
+            @Html.ActionLink(ATM_Application.Languages.lang.Back_to_List, "Index")
+        </div>
+    </form>
+      
+   
+
+</div>
+
